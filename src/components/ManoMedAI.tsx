@@ -1,0 +1,134 @@
+'use client';
+
+import { useState } from 'react';
+import { useAuth } from '@/lib/firebase/auth';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { FaHeartbeat, FaUser, FaCalendarAlt, FaVenusMars, FaNotesMedical } from 'react-icons/fa';
+
+export function ManoMedAI() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    name: '',
+    age: '',
+    gender: '',
+    symptoms: '',
+    medicalHistory: ''
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const queryParams = new URLSearchParams(formData);
+    router.push(`/questionnaire?${queryParams.toString()}`);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  return (
+    <Card className="max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle className="text-2xl flex items-center gap-2">
+          <FaHeartbeat className="text-primary" />
+          Health Assessment Form
+        </CardTitle>
+        <CardDescription>
+          Please provide your health information for a personalized assessment
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FaUser className="text-muted-foreground" />
+              <Label htmlFor="name">Full Name</Label>
+            </div>
+            <Input
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FaCalendarAlt className="text-muted-foreground" />
+              <Label htmlFor="age">Age</Label>
+            </div>
+            <Input
+              id="age"
+              name="age"
+              type="number"
+              value={formData.age}
+              onChange={handleChange}
+              placeholder="Enter your age"
+              required
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FaVenusMars className="text-muted-foreground" />
+              <Label htmlFor="gender">Gender</Label>
+            </div>
+            <Input
+              id="gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              placeholder="Enter your gender"
+              required
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FaNotesMedical className="text-muted-foreground" />
+              <Label htmlFor="symptoms">Current Symptoms</Label>
+            </div>
+            <Textarea
+              id="symptoms"
+              name="symptoms"
+              value={formData.symptoms}
+              onChange={handleChange}
+              placeholder="Describe your current symptoms"
+              required
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FaNotesMedical className="text-muted-foreground" />
+              <Label htmlFor="medicalHistory">Medical History</Label>
+            </div>
+            <Textarea
+              id="medicalHistory"
+              name="medicalHistory"
+              value={formData.medicalHistory}
+              onChange={handleChange}
+              placeholder="Describe your medical history"
+              required
+            />
+          </div>
+
+          <Button type="submit" className="w-full">
+            Start Assessment
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+} 
